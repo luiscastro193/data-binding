@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Data binding</title>
+		<meta name="author" content="Luis Castro Martín">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="favicon.ico">
+		<script src="framework.js"></script>
+	</head>
+
+	<body>
+		<input type="number" oninput="nInputs.value = this.value" onmouseenter="this.select()" min="1" value="3" >
+		<br><br>
+		<section id="inputs">
+		</section>
+		<script>
+			"use strict";
+			var nInputs = newObservable(document.querySelector("input").value);
+			var message = newObservable("Binded data");
+			
+			function inputElement() {
+				let element = htmlToElement(`<article>
+					<input type="text" oninput="message.value = this.value" onmouseenter="this.focus()" style="max-width: 17cm; width: 100%" >
+					<br><br>
+				</article>`);
+				let input = element.querySelector('input');
+				input.value = message.value;
+				message.subscribe(input, () => input.value = message.value);
+				return element;
+			}
+			
+			function inputsElement() {
+				let element = htmlToElement(`<section id="inputs"></section>`);
+				
+				for (let i = 0; i < nInputs.value; i++)
+					element.appendChild(inputElement());
+				
+				nInputs.subscribe(element, () => replaceElement(element, inputsElement()));
+				return element;
+			}
+			
+			replaceElement(document.getElementById("inputs"), inputsElement());
+		</script>
+	</body>
+</html>

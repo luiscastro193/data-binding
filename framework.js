@@ -1,15 +1,15 @@
 "use strict";
-function htmlToElement(html) {
+window.htmlToElement = function(html) {
 	let template = document.createElement('template');
 	template.innerHTML = html.trim();
 	return template.content.firstChild;
 }
 
-function replaceElement(oldElement, newElement) {
+window.replaceElement = function(oldElement, newElement) {
 	oldElement.parentNode.replaceChild(newElement, oldElement);
 }
 
-function newEvent() {
+window.newEvent = function() {
 	let event = document.createElement('e');
 	let aux = new Event('e');
 	
@@ -29,7 +29,7 @@ function newEvent() {
 	return event;
 }
 
-function newObservable(initialValue) {
+window.newObservable = function(initialValue) {
 	let observable = {
 		variable: initialValue,
 		event: newEvent(),

@@ -9,7 +9,7 @@ window.replaceElement = function(oldElement, newElement) {
 	oldElement.parentNode.replaceChild(newElement, oldElement);
 }
 
-window.auxEvent = class {
+window.AuxEvent = class {
 	constructor() {
 		this.event = document.createElement('e');
 		this.aux = new Event('e');
@@ -34,7 +34,7 @@ window.auxEvent = class {
 window.Observable = class {
 	constructor(initialValue) {
 		this.variable = initialValue;
-		this.event = new auxEvent();
+		this.event = new AuxEvent();
 	}
 	
 	get value() {

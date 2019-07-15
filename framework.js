@@ -9,11 +9,15 @@ window.replaceElement = function(oldElement, newElement) {
 	oldElement.parentNode.replaceChild(newElement, oldElement);
 }
 
-window.newEvent = function() {
-	let event = document.createElement('e');
-	let aux = new Event('e');
+window.auxEvent = class {
+	constructor() {
+		this.event = document.createElement('e');
+		this.aux = new Event('e');
+	}
 	
-	event.addListener = function(element, callback) {
+	addListener(element, callback) {
+		let event = this.event;
+		
 		event.addEventListener('e', function listener() {
 			if (document.contains(element))
 				callback();
@@ -22,28 +26,27 @@ window.newEvent = function() {
 		});
 	}
 	
-	event.dispatch = function() {
-		event.dispatchEvent(aux);
+	dispatch() {
+		this.event.dispatchEvent(this.aux);
 	}
-	
-	return event;
 }
 
-window.newObservable = function(initialValue) {
-	let observable = {
-		variable: initialValue,
-		event: newEvent(),
-		get value() {
-			return this.variable;
-		},
-		set value(newValue) {
-			this.variable = newValue;
-			this.event.dispatch();
-		},
-		subscribe: function(element, callback) {
-			this.event.addListener(element, callback);
-		}
-	};
+window.Observable = class {
+	constructor(initialValue) {
+		this.variable = initialValue;
+		this.event = new auxEvent();
+	}
 	
-	return observable;
+	get value() {
+		return this.variable;
+	}
+	
+	set value(newValue) {
+		this.variable = newValue;
+		this.event.dispatch();
+	}
+	
+	subscribe(element, callback) {
+		this.event.addListener(element, callback);
+	}
 }

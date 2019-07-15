@@ -17,8 +17,8 @@
 		</section>
 		<script>
 			"use strict";
-			var nInputs = newObservable(document.querySelector("input").value);
-			var message = newObservable("Binded data");
+			var nInputs = new Observable(document.querySelector("input").value);
+			var message = new Observable("Binded data");
 			
 			function inputElement() {
 				let element = htmlToElement(`<article>

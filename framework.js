@@ -5,10 +5,6 @@ window.htmlToElement = function(html) {
 	return template.content.firstChild;
 }
 
-window.replaceElement = function(oldElement, newElement) {
-	oldElement.parentNode.replaceChild(newElement, oldElement);
-}
-
 window.AuxEvent = class {
 	constructor() {
 		this.event = document.createElement('e');

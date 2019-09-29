@@ -37,11 +37,11 @@
 				for (let i = 0; i < nInputs.value; i++)
 					element.appendChild(inputElement());
 				
-				nInputs.subscribe(element, () => replaceElement(element, inputsElement()));
+				nInputs.subscribe(element, () => element.replaceWith(inputsElement()));
 				return element;
 			}
 			
-			replaceElement(document.getElementById("inputs"), inputsElement());
+			document.getElementById("inputs").replaceWith(inputsElement());
 		</script>
 	</body>
 </html>

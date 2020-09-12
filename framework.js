@@ -1,6 +1,6 @@
 "use strict";
 window.htmlToElement = function(html) {
-	let template = document.createElement('template');
+	let template = document.createDocumentFragment();
 	template.innerHTML = html.trim();
 	return template.content.firstChild;
 }

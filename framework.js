@@ -1,11 +1,16 @@
 "use strict";
-window.htmlToElement = function(html) {
+export async function request(resource, options) {
+	let response = await fetch(resource, options);
+	if (response.ok) return response; else throw response;
+}
+
+export function htmlToElement(html) {
 	let template = document.createElement('template');
 	template.innerHTML = html.trim();
 	return template.content.firstChild;
 }
 
-window.AuxEvent = class {
+export class AuxEvent {
 	constructor() {
 		this.event = document.createElement('e');
 		this.aux = new Event('e');
@@ -27,7 +32,7 @@ window.AuxEvent = class {
 	}
 }
 
-window.Observable = class {
+export class Observable {
 	constructor(initialValue) {
 		this.variable = initialValue;
 		this.event = new AuxEvent();

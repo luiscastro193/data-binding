@@ -1,9 +1,4 @@
 "use strict";
-export function pathName() {
-	let path = location.pathname;
-	return path.endsWith('/') ? path : path + '/';
-}
-
 export async function request(resource, options) {
 	let response = await fetch(resource, options);
 	if (response.ok) return response; else throw response;

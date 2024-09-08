@@ -12,7 +12,7 @@ export function htmlToElement(html) {
 
 export class AuxEvent {
 	constructor() {
-		this.event = document.createElement('e');
+		this.event = new EventTarget();
 		this.aux = new Event('e');
 	}
 	

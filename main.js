@@ -2,8 +2,8 @@
 import {htmlToElement, Observable} from "./framework.js";
 
 let mainInput = document.querySelector("input");
-let nInputs = new Observable(mainInput.value);
-let message = new Observable("Binded data");
+const nInputs = new Observable(mainInput.value);
+const message = new Observable("Binded data");
 
 function inputElement() {
 	let element = htmlToElement(`<article>

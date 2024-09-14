@@ -18,10 +18,14 @@ export class AuxEvent {
 	
 	addListener(element, callback) {
 		let event = this.event;
+		if (element.myCallbacks) element.myCallbacks.push(callback);
+		else element.myCallbacks = [callback];
+		let references = [new WeakRef(element), new WeakRef(callback)];
 		
 		event.addEventListener('e', function listener() {
-			if (document.contains(element))
-				callback();
+			let [myElement, myCallback] = references.map(reference => reference.deref());
+			if (myElement && myCallback && document.contains(myElement))
+				myCallback();
 			else
 				event.removeEventListener('e', listener);
 		});

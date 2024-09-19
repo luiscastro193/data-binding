@@ -7,7 +7,7 @@ const message = new Observable("Binded data");
 
 function inputElement() {
 	let element = htmlToElement(`<article>
-		<input type="text" style="max-width: 17cm; width: 100%" >
+		<input name="msg" type="text" style="max-width: 17cm; width: 100%" >
 		<br><br>
 	</article>`);
 	let input = element.querySelector('input');

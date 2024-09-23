@@ -31,6 +31,10 @@ export class AuxEvent {
 		});
 	}
 	
+	addGlobalListener(callback) {
+		this.event.addEventListener('e', callback);
+	}
+	
 	dispatch() {
 		this.event.dispatchEvent(this.aux);
 	}
@@ -53,5 +57,9 @@ export class Observable {
 	
 	subscribe(element, callback) {
 		this.event.addListener(element, callback);
+	}
+	
+	addGlobalListener(callback) {
+		this.event.addGlobalListener(callback);
 	}
 }

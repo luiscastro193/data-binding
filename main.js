@@ -2,7 +2,7 @@
 import {htmlToElement, Observable} from "./framework.js";
 
 let mainInput = document.querySelector("input");
-const nInputs = new Observable(mainInput.value);
+const nInputs = new Observable(mainInput.valueAsNumber);
 const message = new Observable("Binded data");
 
 function inputElement() {
@@ -28,6 +28,6 @@ function inputsElement() {
 	return element;
 }
 
-mainInput.oninput = () => {nInputs.value = mainInput.value};
+mainInput.oninput = () => {nInputs.value = mainInput.valueAsNumber};
 mainInput.onmouseenter = () => mainInput.select();
 document.getElementById("inputs").replaceWith(inputsElement());

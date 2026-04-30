@@ -10,25 +10,35 @@ export function htmlToElement(html) {
 	return template.content.firstChild;
 }
 
+const pendingListeners = new Map();
+const callbacksKey = Symbol();
+
+function processListener(listener, references, event) {
+	let [myElement, myCallback] = references.map(reference => reference.deref());
+	if (myElement && myCallback) {
+		if (document.contains(myElement)) {
+			pendingListeners.delete(listener);
+			try {myCallback()} catch (e) {reportError(e)};
+		} else
+			pendingListeners.set(listener, {references, event});
+	} else {
+		pendingListeners.delete(listener);
+		event.removeEventListener('e', listener);
+	}
+}
+
 export class AuxEvent {
 	constructor() {
 		this.event = new EventTarget();
 		this.aux = new Event('e');
 	}
-	
+
 	addListener(element, callback) {
 		let event = this.event;
-		if (element.myCallbacks) element.myCallbacks.push(callback);
-		else element.myCallbacks = [callback];
+		if (element[callbacksKey]) element[callbacksKey].push(callback);
+		else element[callbacksKey] = [callback];
 		let references = [new WeakRef(element), new WeakRef(callback)];
-		
-		event.addEventListener('e', function listener() {
-			let [myElement, myCallback] = references.map(reference => reference.deref());
-			if (myElement && myCallback) {
-				if (document.contains(myElement)) myCallback();
-			} else
-				event.removeEventListener('e', listener);
-		});
+		event.addEventListener('e', function listener() {processListener(listener, references, event)});
 	}
 	
 	addGlobalListener(callback) {
@@ -63,3 +73,23 @@ export class Observable {
 		this.event.addGlobalListener(callback);
 	}
 }
+
+function checkPendingCallbacks() {
+	for (const [listener, {references, event}] of pendingListeners)
+		processListener(listener, references, event);
+}
+
+export function debounce(callback) {
+	let pending = false;
+	return () => {
+		if (!pending) {
+			pending = true;
+			setTimeout(() => {
+				pending = false;
+				callback();
+			});
+		}
+	}
+}
+
+new MutationObserver(debounce(checkPendingCallbacks)).observe(document, {subtree: true, childList: true});

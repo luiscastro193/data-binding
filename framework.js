@@ -14,11 +14,11 @@ const pendingListeners = new Map();
 const callbacksKey = Symbol();
 
 function processListener(listener, references, event) {
-	let [myElement, myCallback] = references.map(reference => reference.deref());
-	if (myElement && myCallback) {
-		if (document.contains(myElement)) {
+	let [element, callback] = references.map(reference => reference.deref());
+	if (element && callback) {
+		if (document.contains(element)) {
 			pendingListeners.delete(listener);
-			try {myCallback()} catch (e) {console.error(e)};
+			try {callback()} catch (e) {setTimeout(() => {throw e})};
 		} else
 			pendingListeners.set(listener, {references, event});
 	} else {

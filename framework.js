@@ -18,7 +18,7 @@ function processListener(listener, references, event) {
 	if (myElement && myCallback) {
 		if (document.contains(myElement)) {
 			pendingListeners.delete(listener);
-			try {myCallback()} catch (e) {reportError(e)};
+			try {myCallback()} catch (e) {console.error(e)};
 		} else
 			pendingListeners.set(listener, {references, event});
 	} else {

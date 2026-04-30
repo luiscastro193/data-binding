@@ -24,9 +24,9 @@ export class AuxEvent {
 		
 		event.addEventListener('e', function listener() {
 			let [myElement, myCallback] = references.map(reference => reference.deref());
-			if (myElement && myCallback)
+			if (myElement && myCallback) {
 				if (document.contains(myElement)) myCallback();
-			else
+			} else
 				event.removeEventListener('e', listener);
 		});
 	}

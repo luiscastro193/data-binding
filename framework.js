@@ -13,7 +13,7 @@ export function htmlToElement(html) {
 const pendingListeners = new Set();
 const callbacksKey = Symbol();
 
-function processListener(listener, references, event) {
+function processListener(listener, references, listeners) {
 	let [element, callback] = references.map(reference => reference.deref());
 	if (element && callback) {
 		if (document.contains(element)) {
@@ -23,30 +23,32 @@ function processListener(listener, references, event) {
 			pendingListeners.add(listener);
 	} else {
 		pendingListeners.delete(listener);
-		event.removeEventListener('e', listener);
+		listeners.delete(listener);
 	}
 }
 
 export class AuxEvent {
 	constructor() {
-		this.event = new EventTarget();
-		this.aux = new Event('e');
+		this.listeners = new Set();
 	}
 
 	addListener(element, callback) {
-		let event = this.event;
+		const listeners = this.listeners;
 		if (element[callbacksKey]) element[callbacksKey].push(callback);
 		else element[callbacksKey] = [callback];
 		let references = [new WeakRef(element), new WeakRef(callback)];
-		event.addEventListener('e', function listener() {processListener(listener, references, event)});
+		let listener = () => processListener(listener, references, listeners);
+		listeners.add(listener);
 	}
-	
+
 	addGlobalListener(callback) {
-		this.event.addEventListener('e', callback);
+		this.listeners.add(() => {
+			try {callback()} catch (e) {setTimeout(() => {throw e})};
+		});
 	}
-	
+
 	dispatch() {
-		this.event.dispatchEvent(this.aux);
+		for (const listener of [...this.listeners]) listener();
 	}
 }
 
@@ -75,7 +77,7 @@ export class Observable {
 }
 
 function checkPendingCallbacks() {
-	for (const listener of pendingListeners) listener();
+	for (const listener of [...pendingListeners]) listener();
 }
 
 export function debounce(callback) {

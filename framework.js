@@ -10,7 +10,7 @@ export function htmlToElement(html) {
 	return template.content.firstChild;
 }
 
-const pendingListeners = new Map();
+const pendingListeners = new Set();
 const callbacksKey = Symbol();
 
 function processListener(listener, references, event) {
@@ -20,7 +20,7 @@ function processListener(listener, references, event) {
 			pendingListeners.delete(listener);
 			try {callback()} catch (e) {setTimeout(() => {throw e})};
 		} else
-			pendingListeners.set(listener, {references, event});
+			pendingListeners.add(listener);
 	} else {
 		pendingListeners.delete(listener);
 		event.removeEventListener('e', listener);
@@ -75,8 +75,7 @@ export class Observable {
 }
 
 function checkPendingCallbacks() {
-	for (const [listener, {references, event}] of pendingListeners)
-		processListener(listener, references, event);
+	for (const listener of pendingListeners) listener();
 }
 
 export function debounce(callback) {

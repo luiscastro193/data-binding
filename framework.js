@@ -13,12 +13,16 @@ export function htmlToElement(html) {
 const pendingListeners = new Set();
 const callbacksKey = Symbol();
 
+function safeCall(callback) {
+	try {callback()} catch (e) {setTimeout(() => {throw e})};
+}
+
 function processListener(listener, references, listeners) {
 	let [element, callback] = references.map(reference => reference.deref());
 	if (element && callback) {
 		if (document.contains(element)) {
 			pendingListeners.delete(listener);
-			try {callback()} catch (e) {setTimeout(() => {throw e})};
+			safeCall(callback);
 		} else
 			pendingListeners.add(listener);
 	} else {
@@ -42,9 +46,7 @@ export class AuxEvent {
 	}
 
 	addGlobalListener(callback) {
-		this.listeners.add(() => {
-			try {callback()} catch (e) {setTimeout(() => {throw e})};
-		});
+		this.listeners.add(() => safeCall(callback));
 	}
 
 	dispatch() {
